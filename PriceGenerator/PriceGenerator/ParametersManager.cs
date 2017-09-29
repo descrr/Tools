@@ -3,12 +3,50 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace PriceGenerator
 {
 	public class ParametersManager
 	{
 		private static string WebPageContent;
+
+		public void RenewAccounts()
+		{
+			var accountIDs = new List<string>();
+			var urlList = GenerateSanboxURLs();
+			urlList.AddRange(GenerateBestAccountsURLs());
+			
+			foreach (var url in urlList)
+			{
+				accountIDs.AddRange(GetPamminPageAccountIDs(url));
+			}
+
+			foreach (var accountId in accountIDs)
+			{
+				Constants.AddAccount(accountId);
+			}
+		}
+
+		private List<string> GenerateSanboxURLs()
+		{
+			var urlList = new List<string>();
+			urlList.Add(@"https://pammin.ru/pamm/rating/sandbox?sort=cagr");
+			for(int i = 2; i < 11; i++)
+				urlList.Add(string.Format(@"https://pammin.ru/pamm/rating/sandbox?page={0}", i));
+			
+			return urlList;
+		}
+
+		private List<string> GenerateBestAccountsURLs()
+		{
+			var urlList = new List<string>();
+			urlList.Add(@"https://pammin.ru/pamm/rating?sort=cagr");
+			for (int i = 2; i < 11; i++)
+				urlList.Add(string.Format(@"https://pammin.ru/pamm/rating/sandbox?page={0}", i));
+
+			return urlList;
+		}
 
 		public void RenewParameters()
 		{
@@ -267,6 +305,41 @@ namespace PriceGenerator
 				Logger.LogMessage(e.Message);
 				return null;
 			}
+		}
+
+		private List<string> GetPamminPageAccountIDs(string url)
+		{
+			var accountsIDs = new List<string>();
+			try
+			{
+				WebPageContent = GetWebPageContent(url, Encoding.UTF8);
+				int index = -1;
+				string prefix = "'entity':'pamm','id':";
+				prefix = prefix.Replace("'", "\"");
+				do
+				{
+					++index;
+					index = WebPageContent.IndexOf(prefix, index);
+					if(index >= 0)
+					{
+						index += prefix.Length;
+						string accountId = string.Empty;
+						while(WebPageContent[index] != ',')
+						{
+							accountId = accountId + WebPageContent[index++];
+						}
+						accountsIDs.Add(accountId);
+					}
+				}
+				while(index >= 0);
+				
+			}
+			catch (Exception e)
+			{
+				Logger.LogMessage(e.Message);
+				return accountsIDs;
+			}
+			return accountsIDs;
 		}
 	}
 }

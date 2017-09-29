@@ -140,6 +140,7 @@ namespace PriceGenerator
 		public static void RenewParameters()
 		{
 			var parametersManager = new ParametersManager();
+			parametersManager.RenewAccounts();
 			parametersManager.RenewParameters();
 		}
 	}

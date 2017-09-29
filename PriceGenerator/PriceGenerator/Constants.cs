@@ -27,7 +27,7 @@ namespace PriceGenerator
 		  ,[insert_date]
 		  ,[factor_vosst]
 		  ,[nish_risk]
-		  ,[prib_vol]
+		  ,prib_vol
 		  ,[sred_dnev_ub]
 		  ,[kalmar]
 		  ,[sharp]
@@ -103,6 +103,19 @@ and isnull(r.rsrURL, '') <> '' and c.Cost > 0 and (select count(*) from GF_Vofis
 					);
 				SqlCommand command = connection.CreateCommand();
 				command.CommandText = sqlInsert;
+				command.ExecuteNonQuery();
+			}
+		}
+
+		public static void AddAccount(string accountId)
+		{
+			using (var connection = new SqlConnection(ConnectionString))
+			{
+				connection.Open();
+
+				string sqlExec = string.Format("exec dbo.sp_add_account @account_id = '{0}', @account_name ='{0}'", accountId);
+				SqlCommand command = connection.CreateCommand();
+				command.CommandText = sqlExec;
 				command.ExecuteNonQuery();
 			}
 		}
