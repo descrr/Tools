@@ -13,7 +13,11 @@ namespace PriceGenerator
 		{ 
 			get
 			{
-				string dataSource = (Environment.MachineName == "HOMEPC") ? @"HOMEPC\SQL2014" : "GVAPC";
+				string dataSource = "GVAPC";
+				if (Environment.MachineName == "HOMEPC")
+					dataSource = @"HOMEPC\SQL2014";
+				else if (Environment.MachineName == "EPBYMINW1589")
+					dataSource = "EPBYMINW1589";
 				return string.Format(ConnectionStringTemplate, dataSource);
 			}
 		}
@@ -29,7 +33,7 @@ namespace PriceGenerator
 		  ,[sharp]
 		  ,[sortino]
 		  ,[avg_doh_week]
-		  ,[koeff_izm_doh]
+		  ,[avg_doh_day]
 	  FROM [dbo].[v_accounts]";
 
         public const string SqlSelectAllVofisPlusProducts = "SELECT Id, Url, Price, Category, PictureUrl, Vendor, Model, Description, Name, ProductCode, isPrice, dbo.[fn_GetProductDealKeywords](id) as DealKeywords FROM dbo.PriceMarket";
@@ -85,7 +89,7 @@ and isnull(r.rsrURL, '') <> '' and c.Cost > 0 and (select count(*) from GF_Vofis
 			{
 				connection.Open();
 				
-				string sqlInsert = string.Format("insert into dbo.account_history(account_id, factor_vosst, nish_risk, prib_vol, sred_dnev_ub, kalmar, sortino, sharp) values('{0}', {1}, {2}, {3}, {4}, {5}, {6}, {7})"
+				string sqlInsert = string.Format("insert into dbo.account_history(account_id, factor_vosst, nish_risk, prib_vol, sred_dnev_ub, kalmar, sortino, sharp, avg_doh_week, avg_doh_day) values('{0}', {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9})"
 					, account.Id
 					, (account.FactorVosst == null)? "null": account.FactorVosst.ToString()
 					, (account.NishRisk == null) ? "null" : account.NishRisk.ToString()
@@ -94,6 +98,8 @@ and isnull(r.rsrURL, '') <> '' and c.Cost > 0 and (select count(*) from GF_Vofis
 					, (account.Kalmar == null) ? "null" : account.Kalmar.ToString()
 					, (account.Sortino == null) ? "null" : account.Sortino.ToString()
 					, (account.Sharp == null) ? "null" : account.Sharp.ToString()
+					, (account.DohWeek == null) ? "null" : account.DohWeek.ToString()
+					, (account.DohDay == null) ? "null" : account.DohDay.ToString()
 					);
 				SqlCommand command = connection.CreateCommand();
 				command.CommandText = sqlInsert;
@@ -129,6 +135,8 @@ and isnull(r.rsrURL, '') <> '' and c.Cost > 0 and (select count(*) from GF_Vofis
 			var accountKalmar = reader.GetValue(7).ToString();
 			var accountSharp = reader.GetValue(8).ToString();
 			var accountSortino = reader.GetValue(9).ToString();
+			var accountAvgDohWeek = reader.GetValue(10).ToString();
+			var accountAvgDohDay = reader.GetValue(11).ToString();
 
 			var account = new Account()
 			{
@@ -140,7 +148,9 @@ and isnull(r.rsrURL, '') <> '' and c.Cost > 0 and (select count(*) from GF_Vofis
 				SredDnevUb = string.IsNullOrEmpty(accountSredDnevUb) ? null : (decimal?)Convert.ToDecimal(accountSredDnevUb),
 				Kalmar = string.IsNullOrEmpty(accountKalmar) ? null : (decimal?)Convert.ToDecimal(accountKalmar),
 				Sharp = string.IsNullOrEmpty(accountSharp) ? null : (decimal?)Convert.ToDecimal(accountSharp),
-				Sortino = string.IsNullOrEmpty(accountSortino) ? null : (decimal?)Convert.ToDecimal(accountSortino)
+				Sortino = string.IsNullOrEmpty(accountSortino) ? null : (decimal?)Convert.ToDecimal(accountSortino),
+				DohWeek = string.IsNullOrEmpty(accountAvgDohWeek) ? null : (decimal?)Convert.ToDecimal(accountAvgDohWeek),
+				DohDay = string.IsNullOrEmpty(accountAvgDohDay) ? null : (decimal?)Convert.ToDecimal(accountAvgDohDay),
 			};
 
 			return account;

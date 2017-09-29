@@ -1,20 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using Luxottica.AdamExtensions.Maintenance.Jobs.DownloadViaFileConfiguration.Excel;
-using Luxottica.AdamExtensions.Maintenance.Jobs.DownloadViaFileConfiguration.Helpers;
-using Microsoft.Office.Interop.Excel;
 
 namespace PriceGenerator
 {
@@ -27,10 +15,20 @@ namespace PriceGenerator
 			var accounts = Constants.LoadAccounts();
 			foreach(var account in accounts)
 			{
-				var webAccount = GetWebPageInfo(GenerateTradePageUrl(account));
-				webAccount.Id = account.Id;
-				Constants.UpdateAccountHistory(webAccount);
+				var resultAccount = GetTradeWebPageInfo(GenerateTradePageUrl(account));
+				resultAccount.Id = account.Id;
+
+				var webMainAccount = GetMainWebPageInfo(GenerateMainPageUrl(account));
+				resultAccount.DohWeek = webMainAccount.DohWeek;
+				resultAccount.DohDay = webMainAccount.DohDay;
+
+				Constants.UpdateAccountHistory(resultAccount);
 			}
+		}
+
+		private string GenerateMainPageUrl(Account account)
+		{
+			return string.Format(@"https://alpari.com/ru/investor/pamm/{0}/", account.Id);
 		}
 
 		private string GenerateTradePageUrl(Account account)
@@ -123,12 +121,69 @@ namespace PriceGenerator
 
 			return GetParameterValue(prefix, postfix);
 		}
-		
 
-		private decimal? GetParameterValue(string prefix, string postfix)
+		private decimal? GetDohDay()
 		{
+			string prefix = @"Доходность за период";
+			prefix = prefix.Replace("'", "\"");
+
+			var postfix = "%</td></tr></tbody></table></div";
+			postfix = postfix.Replace("'", "\"");
+
+			return GetParameterValue(prefix, postfix);
+		}
+
+		private decimal? GetDohWeek()
+		{
+			string prefix = @"Доходность за период";
+			prefix = prefix.Replace("'", "\"");
+
+			//var postfix = "</td><td>";
+			var postfix = "%</td></tr></tbody></table></div";
+			postfix = postfix.Replace("'", "\"");
+
 			var checker = new BasePriceChecker(prefix, postfix);
 			var draftValue = checker.GetElementValue(WebPageContent);
+			if (string.IsNullOrEmpty(draftValue))
+				return null;
+
+			int index = draftValue.Length - 1;
+			string stringValue = string.Empty;
+			char currentSymbol;
+
+			do
+			{
+				currentSymbol = draftValue[index];
+				draftValue = draftValue.Substring(0, draftValue.Length - 1);
+				--index;
+			}
+			while (currentSymbol != '%');
+
+			//prefix = draftValue.Substring(0, 1);
+			//postfix = "%";
+
+			index = draftValue.Length - 1;
+			stringValue = string.Empty;
+			while (draftValue[index] != '>')
+			{
+				stringValue = draftValue[index--] + stringValue;
+			}
+
+			stringValue = stringValue.Replace("–", "-");
+
+			if (stringValue == "-")
+				return null;
+
+			return Convert.ToDecimal(stringValue);
+		}
+		
+		private decimal? GetParameterValue(string prefix, string postfix, string pageContent = null)
+		{
+			if (string.IsNullOrEmpty(pageContent))
+				pageContent = WebPageContent;
+
+			var checker = new BasePriceChecker(prefix, postfix);
+			var draftValue = checker.GetElementValue(pageContent);
 			if (string.IsNullOrEmpty(draftValue))
 				return null;
 
@@ -171,7 +226,26 @@ namespace PriceGenerator
 			return contents;
 		}
 
-		private Account GetWebPageInfo(string url)
+		private Account GetMainWebPageInfo(string url)
+		{
+			try
+			{
+				WebPageContent = GetWebPageContent(url, Encoding.UTF8);
+				Account account = new Account();
+
+				account.DohDay = GetDohDay();
+				account.DohWeek = GetDohWeek();
+
+				return account;
+			}
+			catch (Exception e)
+			{
+				Logger.LogMessage(e.Message);
+				return null;
+			}
+		}
+
+		private Account GetTradeWebPageInfo(string url)
 		{
 			try
 			{
@@ -194,6 +268,5 @@ namespace PriceGenerator
 				return null;
 			}
 		}
-
 	}
 }
