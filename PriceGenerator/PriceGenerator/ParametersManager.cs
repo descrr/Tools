@@ -233,7 +233,8 @@ namespace PriceGenerator
 			}
 
 			stringValue = stringValue.Replace("–", "-");
-
+			stringValue = stringValue.Replace("�", "");
+			
 			if (stringValue == "-")
 				return null;
 
