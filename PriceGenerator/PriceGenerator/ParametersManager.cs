@@ -50,8 +50,17 @@ namespace PriceGenerator
 
 		public void RenewParameters()
 		{
+			//var account = new Account();
+			//account.Id = "389481";
+			//var resultAccount = GetTradeWebPageInfo(GenerateTradePageUrl(account));
+			//resultAccount.Id = account.Id;
+			//var webMainAccount = GetMainWebPageInfo(GenerateMainPageUrl(account));
+			//resultAccount.DohWeek = webMainAccount.DohWeek;
+			//resultAccount.DohDay = webMainAccount.DohDay;
+			//Constants.UpdateAccountHistory(resultAccount);
+			
 			var accounts = Constants.LoadAccounts();
-			foreach(var account in accounts)
+			foreach (var account in accounts)
 			{
 				var resultAccount = GetTradeWebPageInfo(GenerateTradePageUrl(account));
 				resultAccount.Id = account.Id;
