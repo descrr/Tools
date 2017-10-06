@@ -18,13 +18,38 @@ namespace Strategy
 			inputResults.Add(false);
 			inputResults.Add(true);
 			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
+			inputResults.Add(false);
+			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
 
-
-			//var сumulativeBetTester = new BetStrategyTester(eBetStrategies.Cumulative, inputResults);
-			//сumulativeBetTester.TestStrategy();
-
-			var resetBetTester = new BetStrategyTester(eBetStrategies.Reset, inputResults);
-			resetBetTester.TestStrategy();
+			var selector = new BetStrategySelector(inputResults);
+			var strategy = selector.GetBestStrategy();
 		}
 	}
 }
