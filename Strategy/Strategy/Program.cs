@@ -15,11 +15,16 @@ namespace Strategy
 
 			inputResults.Add(true);
 			inputResults.Add(true);
-			inputResults.Add(true);
 			inputResults.Add(false);
+			inputResults.Add(true);
+			inputResults.Add(true);
 
-			var betTester = new BetStrategyTester(eBetStrategies.Cummulative, inputResults);
-			betTester.TestStrategy();
+
+			//var сumulativeBetTester = new BetStrategyTester(eBetStrategies.Cumulative, inputResults);
+			//сumulativeBetTester.TestStrategy();
+
+			var resetBetTester = new BetStrategyTester(eBetStrategies.Reset, inputResults);
+			resetBetTester.TestStrategy();
 		}
 	}
 }

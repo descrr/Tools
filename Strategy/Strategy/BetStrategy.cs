@@ -8,7 +8,8 @@ namespace Strategy
 {
 	public enum eBetStrategies
 	{
-		Cummulative = 1
+		Cumulative = 1,
+		Reset = 2
 	}
 
 	public class BetStrategyTester
@@ -29,13 +30,26 @@ namespace Strategy
 		public void TestStrategy()
 		{
 			int winUnits = 0;
-			for(int i = 1; i < WinResults.Count; i++)
+			Console.WriteLine("Turn: 1");
+			
+			for (int i = 1; i < WinResults.Count; i++)
 			{
+				if (i > 1)
+					Console.WriteLine("Turn: {0}", i);
+
+				Console.WriteLine("Before:");
+				Console.WriteLine("units bet={0}", Strategy.CurrentBetInUnits);
+				Console.WriteLine("units count left={0}", Strategy.UnitsCount);
+				Console.WriteLine("");
+
 				var winResult = WinResults[i];
 				winUnits = Strategy.ProcessBet(winResult);
+				
+				Console.WriteLine("After:");
 				Console.WriteLine("win units={0}", winUnits);
 				Console.WriteLine("units count={0}", Strategy.UnitsCount + Strategy.CurrentBetInUnits);
 				Console.WriteLine("next units bet={0}", Strategy.CurrentBetInUnits);
+				Console.WriteLine("");
 				Console.WriteLine("");
 				if (Strategy.UnitsCount <= 0)
 				{
@@ -49,7 +63,9 @@ namespace Strategy
 		{
 			switch(betStrategy)
 			{
-				case eBetStrategies.Cummulative: return new CummulativeBetStrategy();
+				case eBetStrategies.Cumulative: return new CumulativeBetStrategy();
+					break;
+				case eBetStrategies.Reset: return new ResetBetStrategy();
 					break;
 				default: return null;
 			}
@@ -69,10 +85,10 @@ namespace Strategy
 		{
 			Cycle = cycle;
 			CycleSpin = 0;
-
-			UnitsCount = unitsCount;
+			
 			LastBet = firstBet;
 			CurrentBetInUnits = 1;
+			UnitsCount = unitsCount - CurrentBetInUnits;
 		}
 
 		public int ProcessBet(bool isWinBet)
@@ -93,7 +109,7 @@ namespace Strategy
 		protected abstract int ProcessLostBet();
 	}
 
-	public class CummulativeBetStrategy : BaseBetStrategy
+	public class CumulativeBetStrategy : BaseBetStrategy
 	{
 		protected override int ProcessWinBet()
 		{
@@ -110,6 +126,28 @@ namespace Strategy
 			int spinResult = (-1)*CurrentBetInUnits;
 			--CurrentBetInUnits;
 			--CycleSpin;
+
+			return spinResult;
+		}
+	}
+
+	public class ResetBetStrategy : BaseBetStrategy
+	{
+		protected override int ProcessWinBet()
+		{
+			int spinResult = CurrentBetInUnits * 2;
+			UnitsCount += spinResult;
+			++CurrentBetInUnits;
+			++CycleSpin;
+
+			return spinResult;
+		}
+
+		protected override int ProcessLostBet()
+		{
+			int spinResult = (-1) * CurrentBetInUnits;
+			CurrentBetInUnits = 1;
+			CycleSpin = 1;
 
 			return spinResult;
 		}
