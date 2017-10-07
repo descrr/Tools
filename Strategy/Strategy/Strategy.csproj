@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bar2XoConverter.cs" />
+    <Compile Include="BarsLoader.cs" />
     <Compile Include="BetStrategy.cs" />
     <Compile Include="DirectionStrategy.cs" />
     <Compile Include="Program.cs" />

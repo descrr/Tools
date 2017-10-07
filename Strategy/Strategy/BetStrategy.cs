@@ -17,8 +17,8 @@ namespace Strategy
 		const int MinCycle = 5;
 		const int MaxCycle = 10;
 
-		private List<bool> WinResults;
-		public BetStrategySelector(List<bool> winResults)
+		private Dictionary<int, bool> WinResults;
+		public BetStrategySelector(Dictionary<int, bool> winResults)
 		{
 			WinResults = winResults;
 		}
@@ -52,11 +52,11 @@ namespace Strategy
 	public class BetStrategyTester
 	{
 		public BaseBetStrategy Strategy;
-		private List<bool> WinResults;
+		private Dictionary<int, bool> WinResults;
 
 		private int UnitsCount = 30; // 30..50
 		
-		public BetStrategyTester(eBetStrategyTypes strategyType, int cycle, List<bool> winResults)
+		public BetStrategyTester(eBetStrategyTypes strategyType, int cycle, Dictionary<int, bool> winResults)
 		{
 			WinResults = winResults;
 			Strategy = CreateBetStrategy(strategyType);
@@ -107,9 +107,7 @@ namespace Strategy
 			switch(betStrategy)
 			{
 				case eBetStrategyTypes.Cumulative: return new CumulativeBetStrategy();
-					break;
 				case eBetStrategyTypes.Reset: return new ResetBetStrategy();
-					break;
 				default: return null;
 			}
 		}
