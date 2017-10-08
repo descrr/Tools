@@ -96,8 +96,8 @@ namespace Strategy
 			
 			//return the rest of units
 			Strategy.UnitsCount += Strategy.CurrentBetInUnits;
-			Console.WriteLine("units={0}", Strategy.UnitsCount);
-			Console.WriteLine("");
+			//Console.WriteLine("units={0}", Strategy.UnitsCount);
+			//Console.WriteLine("");
 
 			return Strategy.UnitsCount;
 		}
