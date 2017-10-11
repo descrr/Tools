@@ -10,15 +10,26 @@ namespace Strategy
 	{
 		static void Main(string[] args)
 		{
-			var dataLoader = new BarsLoader();
-			var history = dataLoader.LoadFromFile(@"C:\Projects\Tools\Strategy\Data\EURUSD5.csv");
-			var converter = new Bar2XoConverter();
-			var xoListMain = converter.Convert(history.Bars);
+			if(args.Count() == 0)
+			{
+				Console.WriteLine("No input parameters");
+				return;
+			}
 
-			xoListMain[xoListMain.Count] = true;//////////
+			string currencyPair = args[0];
 
 			//skip first 12 and test
-			int startXoIndex = 12;// xoListMain.Count - 1;//12;
+			const int startXoIndex = 12;// xoListMain.Count - 1;
+			const int maxXoCount = 100 + startXoIndex;
+
+			var dataLoader = new BarsLoader();
+			string fileName = string.Format(@"..\..\..\Data\{0}5.csv", currencyPair);
+			var history = dataLoader.LoadFromFile(fileName);
+			var converter = new Bar2XoConverter();
+			var xoListMain = converter.Convert(history.Bars, maxXoCount);
+
+			//xoListMain[xoListMain.Count] = false;//////////
+
 			int winCount = 0;
 			int winInUnits = 0;
 
@@ -55,7 +66,6 @@ namespace Strategy
 
 				Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits);
 			}
-			//Console.WriteLine("{0} ==> Next forecast: {1}, bet: {2}", history.Bars[history.Bars.Count - 1].Dt, directionStrategy.ForecastedDirection, betStrategy.CurrentBetInUnits);
 		}
 	}
 }

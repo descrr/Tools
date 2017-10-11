@@ -11,10 +11,10 @@ namespace Strategy
 		private const int BoxSize = 50;
 		private const int Point = 10000;
 
-		private Dictionary<int, bool> xoList = new Dictionary<int, bool>();
+		private Dictionary<int, bool> XoList = new Dictionary<int, bool>();
 		private Decimal CurrentLevel;
 		
-		public Dictionary<int, bool> Convert(Dictionary<int, Bar> bars)
+		public Dictionary<int, bool> Convert(Dictionary<int, Bar> bars, int maxXoCount)
 		{
 			//Find current level
 			int currentLevel = (int)(bars[0].O*(Decimal)Point);
@@ -22,8 +22,8 @@ namespace Strategy
 			int mult = (currentLevel - rest) / BoxSize;
 			int nextDwnLevel = mult * BoxSize;
 			int nextUpLevel = nextDwnLevel + BoxSize;
-
 			int barIndex = 0;
+			var xoList = new Dictionary<int, bool>();
 
 			//Convert bars
 			for (int i = 0; i < bars.Count; i++)
@@ -43,12 +43,25 @@ namespace Strategy
 					xoList[barIndex++] = false;
 					nextDwnLevel -= BoxSize;
 					nextUpLevel = nextDwnLevel + 2 * BoxSize;
-					
 				}
 			}
-			
 
-			return xoList;
+			ApplyLimits(xoList, maxXoCount);
+			return XoList;
+		}
+
+		private void ApplyLimits(Dictionary<int, bool> xoList, int maxXoCount)
+		{
+			if(xoList.Count <= maxXoCount)
+			{
+				XoList = xoList;
+				return;
+			}
+
+			for (int i = xoList.Count - maxXoCount; i < xoList.Count; i++)
+			{
+				XoList[XoList.Count] = xoList[i];
+			}
 		}
 	}
 }

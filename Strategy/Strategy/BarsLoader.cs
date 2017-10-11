@@ -31,7 +31,7 @@ namespace Strategy
 	}
 	public class BarsLoader
     {
-		public BarHistory LoadFromFile(string fileName)
+		public BarHistory LoadFromFile(string fileName/*, int maxBarsCount*/)
 		{
 			//read all lines
 			int j = 0;
@@ -43,7 +43,12 @@ namespace Strategy
 
 			//apply lines limit
 			var barHistory = new BarHistory();
-			for (int i = 0/*allLines.Count - Constants.MAX_LINES_COUNT*/; i < allLines.Count; i++)
+			//if(maxBarsCount > allLines.Count)
+			//{
+			//	maxBarsCount = allLines.Count;
+			//}
+
+			for (int i = 0 /* allLines.Count - maxBarsCount*/; i < allLines.Count; i++)
 			{
 				barHistory.AddBar(ConvertCsvLine2Bar(allLines[i]));
 			}
