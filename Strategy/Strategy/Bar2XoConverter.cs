@@ -45,8 +45,8 @@ namespace Strategy
 					nextUpLevel = nextDwnLevel + 2 * BoxSize;
 				}
 			}
-
 			ApplyLimits(xoList, maxXoCount);
+
 			return XoList;
 		}
 

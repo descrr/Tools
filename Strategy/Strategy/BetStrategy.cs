@@ -23,7 +23,7 @@ namespace Strategy
 			WinResults = winResults;
 		}
 
-		public BaseBetStrategy GetBestStrategy()
+		public BaseBetStrategy GetBestBetStrategy()
 		{
 			var strategyTypes = new List<eBetStrategyTypes>();
 			strategyTypes.Add(eBetStrategyTypes.Cumulative);

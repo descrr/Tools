@@ -19,7 +19,7 @@ namespace Strategy
 			string currencyPair = args[0];
 
 			//skip first 12 and test
-			const int startXoIndex = 12;// xoListMain.Count - 1;
+			const int startXoIndex = 12;
 			const int maxXoCount = 100 + startXoIndex;
 
 			var dataLoader = new BarsLoader();
@@ -32,8 +32,7 @@ namespace Strategy
 
 			int winCount = 0;
 			int winInUnits = 0;
-
-			for(int i = startXoIndex; i < xoListMain.Count; i++)
+			for (int i = startXoIndex; i < xoListMain.Count; i++)
 			{
 				//copy first i elements
 				var xoList = new Dictionary<int, bool>();
@@ -45,7 +44,7 @@ namespace Strategy
 				var directionStrategySelector = new DirectionStrategySelector(xoList);
 				var directionStrategy = directionStrategySelector.GetBestStrategy();
 				var betSelector = new BetStrategySelector(directionStrategy.DirectionResults);
-				var betStrategy = betSelector.GetBestStrategy();
+				var betStrategy = betSelector.GetBestBetStrategy();
 
 				bool? realValue = null;
 				if (i < xoListMain.Count - 1)
@@ -63,7 +62,6 @@ namespace Strategy
 						winInUnits -= betStrategy.CurrentBetInUnits;
 					}
 				}
-
 				Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits);
 			}
 		}
