@@ -9,7 +9,8 @@ namespace Strategy
 	public enum eBetStrategyTypes
 	{
 		Cumulative = 1,
-		Reset = 2
+		Reset = 2,
+		Martingale = 3
 	}
 
 	public class BetStrategySelector
@@ -28,6 +29,7 @@ namespace Strategy
 			var strategyTypes = new List<eBetStrategyTypes>();
 			strategyTypes.Add(eBetStrategyTypes.Cumulative);
 			strategyTypes.Add(eBetStrategyTypes.Reset);
+			strategyTypes.Add(eBetStrategyTypes.Martingale);
 			int bestUnits = -1;
 			BetStrategyTester resultStrategyTester = null;
 
@@ -108,6 +110,7 @@ namespace Strategy
 			{
 				case eBetStrategyTypes.Cumulative: return new CumulativeBetStrategy();
 				case eBetStrategyTypes.Reset: return new ResetBetStrategy();
+				case eBetStrategyTypes.Martingale: return new MartingaleBetStrategy();
 				default: return null;
 			}
 		}
@@ -117,8 +120,9 @@ namespace Strategy
 	{
 		public int UnitsCount = 0;
 		public int CurrentBetInUnits;
-
-		protected int Cycle;
+		public eBetStrategyTypes StrategyType;
+		public int Cycle;
+		
 		protected int CycleSpin;
 		protected bool LastBet;
 
@@ -152,6 +156,10 @@ namespace Strategy
 
 	public class CumulativeBetStrategy : BaseBetStrategy
 	{
+		public CumulativeBetStrategy()
+		{
+			StrategyType = eBetStrategyTypes.Cumulative;
+		}
 		protected override int ProcessWinBet()
 		{
 			int spinResult = CurrentBetInUnits*2;
@@ -174,6 +182,10 @@ namespace Strategy
 
 	public class ResetBetStrategy : BaseBetStrategy
 	{
+		public ResetBetStrategy()
+		{
+			StrategyType = eBetStrategyTypes.Reset;
+		}
 		protected override int ProcessWinBet()
 		{
 			int spinResult = CurrentBetInUnits * 2;
@@ -188,6 +200,32 @@ namespace Strategy
 		{
 			int spinResult = (-1) * CurrentBetInUnits;
 			CurrentBetInUnits = 1;
+			CycleSpin = 1;
+
+			return spinResult;
+		}
+	}
+
+	public class MartingaleBetStrategy : BaseBetStrategy
+	{
+		public MartingaleBetStrategy()
+		{
+			StrategyType = eBetStrategyTypes.Martingale;
+		}
+		protected override int ProcessWinBet()
+		{
+			int spinResult = CurrentBetInUnits * 2;
+			UnitsCount += spinResult;
+			CurrentBetInUnits = 1;
+			++CycleSpin;
+
+			return spinResult;
+		}
+
+		protected override int ProcessLostBet()
+		{
+			int spinResult = (-1) * CurrentBetInUnits;
+			CurrentBetInUnits *= 2;
 			CycleSpin = 1;
 
 			return spinResult;
