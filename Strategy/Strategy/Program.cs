@@ -29,10 +29,11 @@ namespace Strategy
 			var xoListMain = converter.Convert(history.Bars, maxXoCount);
 
 			//xoListMain[xoListMain.Count] = true;//////////
+			//xoListMain[xoListMain.Count] = false;//////////
 
 			int winCount = 0;
 			int winInUnits = 0;
-			for (int i = startXoIndex; i <= xoListMain.Count; i++)
+			for (int i = startXoIndex; i < xoListMain.Count; i++)
 			{
 				//copy first i elements
 				var xoList = new Dictionary<int, bool>();
@@ -44,13 +45,18 @@ namespace Strategy
 					}
 				}
 
+				//if (i == xoListMain.Count - 1)
+				//{
+				//	int rett = 9;
+				//}
+
 				var directionStrategySelector = new DirectionStrategySelector(xoList);
 				var directionStrategy = directionStrategySelector.GetBestStrategy();
 				var betSelector = new BetStrategySelector(directionStrategy.DirectionResults);
 				var betStrategy = betSelector.GetBestBetStrategy();
 
 				bool? realValue = null;
-				if (i < xoListMain.Count)
+				if (i < xoListMain.Count - 1)
 				{
 					realValue = xoListMain[i];
 					//correct forecasting
@@ -65,6 +71,11 @@ namespace Strategy
 						winInUnits -= betStrategy.CurrentBetInUnits;
 					}
 				}
+				//else
+				//{
+				//	int ret = 0;
+				//}
+
 				Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits);
 			}
 		}
