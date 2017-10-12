@@ -46,6 +46,7 @@
     <Compile Include="Bar2XoConverter.cs" />
     <Compile Include="BarsLoader.cs" />
     <Compile Include="BetStrategy.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DirectionStrategy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

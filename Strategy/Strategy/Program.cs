@@ -18,9 +18,9 @@ namespace Strategy
 
 			string currencyPair = args[0];
 
-			//skip first 12 and test
-			const int startXoIndex = 12;
-			const int maxXoCount = 100 + startXoIndex;
+			//skip first X and test
+			int startXoIndex = Constants.Rank - 1;
+			int maxXoCount = Constants.MaxXoCount;
 
 			var dataLoader = new BarsLoader();
 			string fileName = string.Format(@"..\..\..\Data\{0}5.csv", currencyPair);
@@ -28,17 +28,20 @@ namespace Strategy
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, maxXoCount);
 
-			//xoListMain[xoListMain.Count] = false;//////////
+			//xoListMain[xoListMain.Count] = true;//////////
 
 			int winCount = 0;
 			int winInUnits = 0;
-			for (int i = startXoIndex; i < xoListMain.Count; i++)
+			for (int i = startXoIndex; i <= xoListMain.Count; i++)
 			{
 				//copy first i elements
 				var xoList = new Dictionary<int, bool>();
 				for(int j = 0; j <= i; j++)
 				{
-					xoList.Add(j, xoListMain[j]);
+					if (j < xoListMain.Count)
+					{
+						xoList.Add(j, xoListMain[j]);
+					}
 				}
 
 				var directionStrategySelector = new DirectionStrategySelector(xoList);
@@ -47,7 +50,7 @@ namespace Strategy
 				var betStrategy = betSelector.GetBestBetStrategy();
 
 				bool? realValue = null;
-				if (i < xoListMain.Count - 1)
+				if (i < xoListMain.Count)
 				{
 					realValue = xoListMain[i];
 					//correct forecasting

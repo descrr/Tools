@@ -8,7 +8,7 @@ namespace Strategy
 {
 	public class DirectionStrategySelector
 	{
-		const int MaxCycle = 1024;
+		private int MaxCycle = (int)(Math.Pow(2, Constants.Rank));
 
 		private Dictionary<int, bool> XoResults;
 		public DirectionStrategySelector(Dictionary<int, bool> xoResults)
