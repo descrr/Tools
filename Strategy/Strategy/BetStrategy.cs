@@ -8,9 +8,10 @@ namespace Strategy
 {
 	public enum eBetStrategyTypes
 	{
-		Cumulative = 1,
-		Reset = 2,
-		Martingale = 3
+		OneConstantly = 1,
+		Martingale = 2,
+		Cumulative = 3,
+		Reset = 4
 	}
 
 	public class BetStrategySelector
@@ -30,6 +31,7 @@ namespace Strategy
 			strategyTypes.Add(eBetStrategyTypes.Cumulative);
 			strategyTypes.Add(eBetStrategyTypes.Reset);
 			strategyTypes.Add(eBetStrategyTypes.Martingale);
+			strategyTypes.Add(eBetStrategyTypes.OneConstantly);
 			int bestUnits = -1;
 			BetStrategyTester resultStrategyTester = null;
 
@@ -111,6 +113,7 @@ namespace Strategy
 				case eBetStrategyTypes.Cumulative: return new CumulativeBetStrategy();
 				case eBetStrategyTypes.Reset: return new ResetBetStrategy();
 				case eBetStrategyTypes.Martingale: return new MartingaleBetStrategy();
+				case eBetStrategyTypes.OneConstantly: return new OneConstantlyBetStrategy();
 				default: return null;
 			}
 		}
@@ -226,6 +229,32 @@ namespace Strategy
 		{
 			int spinResult = (-1) * CurrentBetInUnits;
 			CurrentBetInUnits *= 2;
+			CycleSpin = 1;
+
+			return spinResult;
+		}
+	}
+
+	public class OneConstantlyBetStrategy : BaseBetStrategy
+	{
+		public OneConstantlyBetStrategy()
+		{
+			StrategyType = eBetStrategyTypes.OneConstantly;
+		}
+		protected override int ProcessWinBet()
+		{
+			int spinResult = CurrentBetInUnits * 2;
+			UnitsCount += spinResult;
+			CurrentBetInUnits = 1;
+			++CycleSpin;
+
+			return spinResult;
+		}
+
+		protected override int ProcessLostBet()
+		{
+			int spinResult = (-1) * CurrentBetInUnits;
+			CurrentBetInUnits = 1;
 			CycleSpin = 1;
 
 			return spinResult;
