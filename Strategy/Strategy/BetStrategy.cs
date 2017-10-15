@@ -16,7 +16,7 @@ namespace Strategy
 
 	public class BetStrategySelector
 	{
-		const int MinCycle = 5;
+		const int MinCycle = 3;
 		const int MaxCycle = 10;
 
 		private Dictionary<int, bool> WinResults;
