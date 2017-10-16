@@ -11,7 +11,7 @@ namespace Strategy
 		private const int BoxSize = 50;
 		private const int Point = 10000;
 
-		private Dictionary<int, bool> XoList = new Dictionary<int, bool>();
+		public Dictionary<int, bool> XoList = new Dictionary<int, bool>();
 		private Decimal CurrentLevel;
 		
 		public Dictionary<int, bool> Convert(Dictionary<int, Bar> bars, int maxXoCount)
@@ -50,7 +50,7 @@ namespace Strategy
 			return XoList;
 		}
 
-		private void ApplyLimits(Dictionary<int, bool> xoList, int maxXoCount)
+		public void ApplyLimits(Dictionary<int, bool> xoList, int maxXoCount)
 		{
 			if(xoList.Count <= maxXoCount)
 			{

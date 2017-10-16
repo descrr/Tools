@@ -28,8 +28,13 @@ namespace Strategy
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, maxXoCount);
 
-			//xoListMain[xoListMain.Count] = true;//////////
-			//xoListMain[xoListMain.Count] = false;//////////
+			//xoListMain[xoListMain.Count] = false;
+			//xoListMain[xoListMain.Count] = false;			
+			//xoListMain[xoListMain.Count] = false;
+
+			var applyConverter = new Bar2XoConverter();
+			applyConverter.ApplyLimits(xoListMain, maxXoCount);
+			xoListMain = applyConverter.XoList;
 
 			int winCount = 0;
 			int winInUnits = 0;
