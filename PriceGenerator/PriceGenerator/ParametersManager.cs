@@ -66,10 +66,13 @@ namespace PriceGenerator
 				resultAccount.Id = account.Id;
 
 				var webMainAccount = GetMainWebPageInfo(GenerateMainPageUrl(account));
-				resultAccount.DohWeek = webMainAccount.DohWeek;
-				resultAccount.DohDay = webMainAccount.DohDay;
+				if (webMainAccount != null)
+				{
+					resultAccount.DohWeek = webMainAccount.DohWeek;
+					resultAccount.DohDay = webMainAccount.DohDay;
 
-				Constants.UpdateAccountHistory(resultAccount);
+					Constants.UpdateAccountHistory(resultAccount);
+				}
 			}
 		}
 
