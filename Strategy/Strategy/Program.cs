@@ -17,6 +17,7 @@ namespace Strategy
 			}
 
 			string currencyPair = args[0];
+			Console.WriteLine(currencyPair);
 
 			DirectionStrategy bestDirectionStrategy = null;
 			int maxXoCount = Constants.MaxXoCount;
@@ -29,7 +30,6 @@ namespace Strategy
 				}
 			}
 			Console.WriteLine("Forecasted: {0}, ProfitCounter={1}", bestDirectionStrategy.ForecastedDirection, bestDirectionStrategy.ProfitCounter);
-
 		}
 
 		private static DirectionStrategy ProcessRank(int startXoIndex, string currencyPair)
@@ -40,9 +40,11 @@ namespace Strategy
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
 
+			//xoListMain.Remove(xoListMain.Count-1);
+			//xoListMain.Remove(xoListMain.Count-1);
 
-			xoListMain[xoListMain.Count] = true;
-			xoListMain[xoListMain.Count] = true;
+			//xoListMain[xoListMain.Count] = true;
+			//xoListMain[xoListMain.Count] = true;
 			//xoListMain[xoListMain.Count] = true;
 			//xoListMain[xoListMain.Count] = true;
 
