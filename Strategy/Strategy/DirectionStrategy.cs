@@ -8,7 +8,7 @@ namespace Strategy
 {
 	public class DirectionStrategySelector
 	{
-		private int MaxCycle = (int)(Math.Pow(2, Constants.Rank));
+		private int TemplateNumber = (int)(Math.Pow(2, Constants.Rank));
 
 		private Dictionary<int, bool> XoResults;
 		public DirectionStrategySelector(Dictionary<int, bool> xoResults)
@@ -20,7 +20,7 @@ namespace Strategy
 		{
 			int profitCount = -1;
 			DirectionStrategy bestStrategy = null; 
-			for(int i = 0; i < MaxCycle; i++)
+			for(int i = 0; i < TemplateNumber; i++)
 			{
 				string strategyTemplate = Convert.ToString(i, 2);
 

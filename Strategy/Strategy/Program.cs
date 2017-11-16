@@ -29,15 +29,15 @@ namespace Strategy
 			var xoListMain = converter.Convert(history.Bars, maxXoCount);
 
 
-			//xoListMain[xoListMain.Count] = true;
-			//xoListMain[xoListMain.Count] = true;
+			xoListMain[xoListMain.Count] = true;
+			xoListMain[xoListMain.Count] = true;
 			//xoListMain[xoListMain.Count] = true;
 			//xoListMain[xoListMain.Count] = true;
 
-			xoListMain[xoListMain.Count] = false;
-			xoListMain[xoListMain.Count] = false;
-			xoListMain[xoListMain.Count] = false;
-			xoListMain[xoListMain.Count] = false;
+			//xoListMain[xoListMain.Count] = false;
+			//xoListMain[xoListMain.Count] = false;
+			//xoListMain[xoListMain.Count] = false;
+			//xoListMain[xoListMain.Count] = false;
 
 
 			var applyConverter = new Bar2XoConverter();
@@ -46,6 +46,7 @@ namespace Strategy
 
 			int winCount = 0;
 			int winInUnits = 0;
+			DirectionStrategy selectedDirectionStrategy = null;
 			for (int i = startXoIndex; i < xoListMain.Count; i++)
 			{
 				//copy first i elements
@@ -89,8 +90,11 @@ namespace Strategy
 				//	int ret = 0;
 				//}
 
-				Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}, BetStrategyType={4}, BetCycle={5}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits, betStrategy.StrategyType, betStrategy.Cycle);
+				//Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}, BetStrategyT = ype={4}, BetCycle={5}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits, betStrategy.StrategyType, betStrategy.Cycle);
+				Console.WriteLine("{0} of {1}", i, xoListMain.Count);
+				selectedDirectionStrategy = directionStrategy;
 			}
+			Console.WriteLine("Forecasted: {0}, ProfitCounter={1}", selectedDirectionStrategy.ForecastedDirection, selectedDirectionStrategy.ProfitCounter);
 		}
 	}
 }

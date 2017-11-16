@@ -17,7 +17,7 @@ namespace Strategy
 	public class BetStrategySelector
 	{
 		const int MinCycle = 3;
-		const int MaxCycle = 10;
+		const int MaxCycle = 4;
 
 		private Dictionary<int, bool> WinResults;
 		public BetStrategySelector(Dictionary<int, bool> winResults)
@@ -58,7 +58,7 @@ namespace Strategy
 		public BaseBetStrategy Strategy;
 		private Dictionary<int, bool> WinResults;
 
-		private int UnitsCount = 30; // 30..50
+		private int UnitsCount = 10; // 30..50
 		
 		public BetStrategyTester(eBetStrategyTypes strategyType, int cycle, Dictionary<int, bool> winResults)
 		{
@@ -93,7 +93,7 @@ namespace Strategy
 				//Console.WriteLine("");
 				if (Strategy.UnitsCount <= 0)
 				{
-					Console.WriteLine("Strategy has failed");
+					//Console.WriteLine("Strategy has failed");
 					break;
 				}				
 			}
