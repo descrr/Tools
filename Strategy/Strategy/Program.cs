@@ -18,15 +18,27 @@ namespace Strategy
 
 			string currencyPair = args[0];
 
-			//skip first X and test
-			int startXoIndex = Constants.Rank - 1;
+			DirectionStrategy bestDirectionStrategy = null;
 			int maxXoCount = Constants.MaxXoCount;
+			for (int i = Constants.MinRank; i <= Constants.MaxRank; i++)
+			{
+				var strategy = ProcessRank(i-1, currencyPair);
+				if(bestDirectionStrategy == null || strategy.ProfitCounter > bestDirectionStrategy.ProfitCounter)
+				{
+					bestDirectionStrategy = strategy;
+				}
+			}
+			Console.WriteLine("Forecasted: {0}, ProfitCounter={1}", bestDirectionStrategy.ForecastedDirection, bestDirectionStrategy.ProfitCounter);
 
+		}
+
+		private static DirectionStrategy ProcessRank(int startXoIndex, string currencyPair)
+		{
 			var dataLoader = new BarsLoader();
 			string fileName = string.Format(@"..\..\..\Data\{0}5.csv", currencyPair);
 			var history = dataLoader.LoadFromFile(fileName);
 			var converter = new Bar2XoConverter();
-			var xoListMain = converter.Convert(history.Bars, maxXoCount);
+			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
 
 
 			xoListMain[xoListMain.Count] = true;
@@ -41,7 +53,7 @@ namespace Strategy
 
 
 			var applyConverter = new Bar2XoConverter();
-			applyConverter.ApplyLimits(xoListMain, maxXoCount);
+			applyConverter.ApplyLimits(xoListMain, Constants.MaxXoCount);
 			xoListMain = applyConverter.XoList;
 
 			int winCount = 0;
@@ -51,7 +63,7 @@ namespace Strategy
 			{
 				//copy first i elements
 				var xoList = new Dictionary<int, bool>();
-				for(int j = 0; j <= i; j++)
+				for (int j = 0; j <= i; j++)
 				{
 					if (j < xoListMain.Count)
 					{
@@ -64,7 +76,7 @@ namespace Strategy
 				//	int rett = 9;
 				//}
 
-				var directionStrategySelector = new DirectionStrategySelector(xoList);
+				var directionStrategySelector = new DirectionStrategySelector(xoList, startXoIndex);
 				var directionStrategy = directionStrategySelector.GetBestStrategy();
 				var betSelector = new BetStrategySelector(directionStrategy.DirectionResults);
 				var betStrategy = betSelector.GetBestBetStrategy();
@@ -91,10 +103,11 @@ namespace Strategy
 				//}
 
 				//Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}, BetStrategyT = ype={4}, BetCycle={5}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits, betStrategy.StrategyType, betStrategy.Cycle);
-				Console.WriteLine("{0} of {1}", i, xoListMain.Count);
+				//Console.WriteLine("{0} of {1}", i, xoListMain.Count);
 				selectedDirectionStrategy = directionStrategy;
 			}
-			Console.WriteLine("Forecasted: {0}, ProfitCounter={1}", selectedDirectionStrategy.ForecastedDirection, selectedDirectionStrategy.ProfitCounter);
+			Console.WriteLine("Rank {0}, Forecasted: {1}, ProfitCounter={2}", startXoIndex+1, selectedDirectionStrategy.ForecastedDirection, selectedDirectionStrategy.ProfitCounter);
+			return selectedDirectionStrategy;
 		}
 	}
 }

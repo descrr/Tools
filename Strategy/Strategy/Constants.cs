@@ -6,7 +6,8 @@ namespace Strategy
 {
 	public static class Constants
 	{
-		public static int Rank = 13;
-		public static int MaxXoCount = 100 + Rank;
+		public static int MinRank = 8;
+		public static int MaxRank = 14;
+		public static int MaxXoCount = 120;
 	}
 }

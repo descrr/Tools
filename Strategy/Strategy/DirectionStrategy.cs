@@ -8,11 +8,12 @@ namespace Strategy
 {
 	public class DirectionStrategySelector
 	{
-		private int TemplateNumber = (int)(Math.Pow(2, Constants.Rank));
+		private int TemplateNumber;
 
 		private Dictionary<int, bool> XoResults;
-		public DirectionStrategySelector(Dictionary<int, bool> xoResults)
+		public DirectionStrategySelector(Dictionary<int, bool> xoResults, int startXoIndex)
 		{
+			TemplateNumber = (int)(Math.Pow(2, startXoIndex+1));
 			XoResults = xoResults;
 		}
 
