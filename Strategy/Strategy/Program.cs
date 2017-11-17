@@ -41,9 +41,8 @@ namespace Strategy
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
 
-			xoListMain.Remove(xoListMain.Count - 1);
-			xoListMain.Remove(xoListMain.Count - 1);
-			xoListMain.Remove(xoListMain.Count - 1);
+			//xoListMain.Remove(xoListMain.Count - 1);
+			//xoListMain.Remove(xoListMain.Count - 1);
 
 			//xoListMain[xoListMain.Count] = true;
 			//xoListMain[xoListMain.Count] = true;
