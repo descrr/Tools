@@ -41,8 +41,9 @@ namespace Strategy
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
 
-			//xoListMain.Remove(xoListMain.Count-1);
-			//xoListMain.Remove(xoListMain.Count-1);
+			xoListMain.Remove(xoListMain.Count - 1);
+			xoListMain.Remove(xoListMain.Count - 1);
+			xoListMain.Remove(xoListMain.Count - 1);
 
 			//xoListMain[xoListMain.Count] = true;
 			//xoListMain[xoListMain.Count] = true;
@@ -81,6 +82,8 @@ namespace Strategy
 
 				var directionStrategySelector = new DirectionStrategySelector(xoList, startXoIndex);
 				var directionStrategy = directionStrategySelector.GetBestStrategy();
+
+				/*
 				var betSelector = new BetStrategySelector(directionStrategy.DirectionResults);
 				var betStrategy = betSelector.GetBestBetStrategy();
 
@@ -99,7 +102,7 @@ namespace Strategy
 						winCount--;
 						winInUnits -= betStrategy.CurrentBetInUnits;
 					}
-				}
+				}*/
 				//else
 				//{
 				//	int ret = 0;
