@@ -34,6 +34,7 @@ namespace Strategy
 
 		private static DirectionStrategy ProcessRank(int startXoIndex, string currencyPair)
 		{
+			var dtStart = DateTime.Now;
 			var dataLoader = new BarsLoader();
 			string fileName = string.Format(@"..\..\..\Data\{0}5.csv", currencyPair);
 			var history = dataLoader.LoadFromFile(fileName);
@@ -108,7 +109,12 @@ namespace Strategy
 				//Console.WriteLine("{0} of {1}", i, xoListMain.Count);
 				selectedDirectionStrategy = directionStrategy;
 			}
-			Console.WriteLine("Rank {0}, Forecasted: {1}, ProfitCounter={2}", startXoIndex+1, selectedDirectionStrategy.ForecastedDirection, selectedDirectionStrategy.ProfitCounter);
+
+			var dtEnd = DateTime.Now;
+			TimeSpan durationInterval = dtEnd - dtStart;
+			string duration = string.Format("{0}:{1}", durationInterval.Minutes, durationInterval.Seconds);
+
+			Console.WriteLine("Rank {0}, Forecasted: {1}, ProfitCounter={2}, duration: {3}", startXoIndex+1, selectedDirectionStrategy.ForecastedDirection, selectedDirectionStrategy.ProfitCounter, duration);
 			return selectedDirectionStrategy;
 		}
 	}
