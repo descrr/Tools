@@ -36,11 +36,11 @@ namespace Strategy
 					prevRealDirection = XoResults[j];
 				}
 
-				if(directionStrategy.StrategyTemplate == "111001000100111")
-				{
-					int test = 9;
-					++test;
-				}
+				//if(directionStrategy.StrategyTemplate == "111001000100111")
+				//{
+				//	int test = 9;
+				//	++test;
+				//}
 
 				if(profitCount < directionStrategy.ProfitCounter)
 				{

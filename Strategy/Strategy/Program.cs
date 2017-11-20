@@ -19,38 +19,39 @@ namespace Strategy
 			string currencyPair = args[0];
 			Console.WriteLine(currencyPair);
 
-			DirectionStrategy bestDirectionStrategy = null;
+			
 			int maxXoCount = Constants.MaxXoCount;			
 			var dataLoader = new BarsLoader();
 			string fileName = string.Format(@"..\..\..\Data\{0}5.csv", currencyPair);
 			var history = dataLoader.LoadFromFile(fileName);
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
-			const string strategyTestTemplate = "111001000100111";
+			//const string strategyTestTemplate = "111001000100111";
 
 			var modes = new List<string>();
+			modes.Add("Current"); //for current position
 			modes.Add("1");
 			modes.Add("11");
 			modes.Add("111");
 			modes.Add("0");
 			modes.Add("00");
-			modes.Add("000");
-			//modes.Add("-1"); //for current position
+			modes.Add("000");			
 
 			foreach (var mode in modes)
 			{
+				DirectionStrategy bestDirectionStrategy = null;
 				for (int i = Constants.MinRank; i <= Constants.MaxRank; i++)
 				{
 					var strategy = ProcessRank(mode, i - 1, currencyPair, xoListMain);
 
-					if (mode == "0" && bestDirectionStrategy != null &&
-						(strategyTestTemplate == strategy.StrategyTemplate
-						|| strategyTestTemplate == bestDirectionStrategy.StrategyTemplate)
-					)
-					{
-						int test = 9;
-						++test;
-					}
+					//if (mode == "0" && bestDirectionStrategy != null &&
+					//	(strategyTestTemplate == strategy.StrategyTemplate
+					//	|| strategyTestTemplate == bestDirectionStrategy.StrategyTemplate)
+					//)
+					//{
+					//	int test = 9;
+					//	++test;
+					//}
 
 					if (bestDirectionStrategy == null || strategy.ProfitCounter > bestDirectionStrategy.ProfitCounter)
 					{
