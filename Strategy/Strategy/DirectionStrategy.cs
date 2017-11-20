@@ -36,6 +36,12 @@ namespace Strategy
 					prevRealDirection = XoResults[j];
 				}
 
+				if(directionStrategy.StrategyTemplate == "111001000100111")
+				{
+					int test = 9;
+					++test;
+				}
+
 				if(profitCount < directionStrategy.ProfitCounter)
 				{
 					profitCount = directionStrategy.ProfitCounter;
@@ -48,7 +54,7 @@ namespace Strategy
 
 	public class DirectionStrategy
 	{
-		private string StrategyTemplate;
+		public string StrategyTemplate;
 		private int TemplateIndex;
 
 		public bool? ForecastedDirection;

@@ -20,40 +20,84 @@ namespace Strategy
 			Console.WriteLine(currencyPair);
 
 			DirectionStrategy bestDirectionStrategy = null;
-			int maxXoCount = Constants.MaxXoCount;
-			for (int i = Constants.MinRank; i <= Constants.MaxRank; i++)
-			{
-				var strategy = ProcessRank(i-1, currencyPair);
-				if(bestDirectionStrategy == null || strategy.ProfitCounter > bestDirectionStrategy.ProfitCounter)
-				{
-					bestDirectionStrategy = strategy;
-				}
-			}
-			Console.WriteLine("Forecasted: {0}, ProfitCounter={1}", bestDirectionStrategy.ForecastedDirection, bestDirectionStrategy.ProfitCounter);
-		}
-
-		private static DirectionStrategy ProcessRank(int startXoIndex, string currencyPair)
-		{
-			var dtStart = DateTime.Now;
+			int maxXoCount = Constants.MaxXoCount;			
 			var dataLoader = new BarsLoader();
 			string fileName = string.Format(@"..\..\..\Data\{0}5.csv", currencyPair);
 			var history = dataLoader.LoadFromFile(fileName);
 			var converter = new Bar2XoConverter();
 			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
+			const string strategyTestTemplate = "111001000100111";
+
+			var modes = new List<string>();
+			modes.Add("1");
+			modes.Add("11");
+			modes.Add("111");
+			modes.Add("0");
+			modes.Add("00");
+			modes.Add("000");
+			//modes.Add("-1"); //for current position
+
+			foreach (var mode in modes)
+			{
+				for (int i = Constants.MinRank; i <= Constants.MaxRank; i++)
+				{
+					var strategy = ProcessRank(mode, i - 1, currencyPair, xoListMain);
+
+					if (mode == "0" && bestDirectionStrategy != null &&
+						(strategyTestTemplate == strategy.StrategyTemplate
+						|| strategyTestTemplate == bestDirectionStrategy.StrategyTemplate)
+					)
+					{
+						int test = 9;
+						++test;
+					}
+
+					if (bestDirectionStrategy == null || strategy.ProfitCounter > bestDirectionStrategy.ProfitCounter)
+					{
+						bestDirectionStrategy = strategy;
+					}
+				}
+				Console.WriteLine("Template={0}", bestDirectionStrategy.StrategyTemplate);
+				Console.WriteLine("Mode {0}, Forecasted: {1}, ProfitCounter={2}", mode, bestDirectionStrategy.ForecastedDirection, bestDirectionStrategy.ProfitCounter);
+				Console.WriteLine("");
+			}
+		}
+
+		private static DirectionStrategy ProcessRank(string mode, int startXoIndex, string currencyPair, Dictionary<int, bool> xoListIn)
+		{
+			var dtStart = DateTime.Now;
+			var xoListMain = new Dictionary<int, bool>(xoListIn);
 
 			//xoListMain.Remove(xoListMain.Count - 1);
 			//xoListMain.Remove(xoListMain.Count - 1);
 
-			//xoListMain[xoListMain.Count] = true;
-			//xoListMain[xoListMain.Count] = true;
-			//xoListMain[xoListMain.Count] = true;
-			//xoListMain[xoListMain.Count] = true;
-
-			//xoListMain[xoListMain.Count] = false;
-			//xoListMain[xoListMain.Count] = false;
-			//xoListMain[xoListMain.Count] = false;
-			//xoListMain[xoListMain.Count] = false;
-
+			switch (mode)
+			{
+				case "1":
+					xoListMain[xoListMain.Count] = true;
+					break;
+				case "11":
+					xoListMain[xoListMain.Count] = true;
+					xoListMain[xoListMain.Count] = true;
+					break;
+				case "111":
+					xoListMain[xoListMain.Count] = true;
+					xoListMain[xoListMain.Count] = true;
+					xoListMain[xoListMain.Count] = true;
+					break;
+				case "0":
+					xoListMain[xoListMain.Count] = false;
+					break;
+				case "00":
+					xoListMain[xoListMain.Count] = false;
+					xoListMain[xoListMain.Count] = false;
+					break;
+				case "000":
+					xoListMain[xoListMain.Count] = false;
+					xoListMain[xoListMain.Count] = false;
+					xoListMain[xoListMain.Count] = false;
+					break;
+			}
 
 			var applyConverter = new Bar2XoConverter();
 			applyConverter.ApplyLimits(xoListMain, Constants.MaxXoCount);
@@ -109,13 +153,14 @@ namespace Strategy
 
 				//Console.WriteLine("Forecasted: {0}, real value: = {1}, winCount={2}, winInUnits={3}, BetStrategyT = ype={4}, BetCycle={5}", directionStrategy.ForecastedDirection, realValue, winCount, winInUnits, betStrategy.StrategyType, betStrategy.Cycle);
 				//Console.WriteLine("{0} of {1}", i, xoListMain.Count);
+
 				selectedDirectionStrategy = directionStrategy;
 			}
 
 			var dtEnd = DateTime.Now;
 			TimeSpan durationInterval = dtEnd - dtStart;
 			string duration = string.Format("{0}:{1}", durationInterval.Minutes, durationInterval.Seconds);
-
+			
 			Console.WriteLine("Rank {0}, Forecasted: {1}, ProfitCounter={2}, duration: {3}", startXoIndex+1, selectedDirectionStrategy.ForecastedDirection, selectedDirectionStrategy.ProfitCounter, duration);
 			return selectedDirectionStrategy;
 		}
