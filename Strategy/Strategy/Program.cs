@@ -18,7 +18,6 @@ namespace Strategy
 
 			string currencyPair = args[0];
 			Console.WriteLine(currencyPair);
-
 			
 			int maxXoCount = Constants.MaxXoCount;			
 			var dataLoader = new BarsLoader();
@@ -28,6 +27,10 @@ namespace Strategy
 			var xoListMain = converter.Convert(history.Bars, Constants.MaxXoCount);
 			//const string strategyTestTemplate = "111001000100111";
 
+			var directions = new List<int>();
+			directions.Add(1);
+			directions.Add(0);
+
 			var modes = new List<string>();
 			modes.Add("Current"); //for current position
 			modes.Add("1");
@@ -35,42 +38,55 @@ namespace Strategy
 			modes.Add("111");
 			modes.Add("0");
 			modes.Add("00");
-			modes.Add("000");			
+			modes.Add("000");
 
-			foreach (var mode in modes)
+			foreach (var direction in directions)
 			{
-				DirectionStrategy bestDirectionStrategy = null;
-				for (int i = Constants.MinRank; i <= Constants.MaxRank; i++)
-				{
-					var strategy = ProcessRank(mode, i - 1, currencyPair, xoListMain);
-
-					//if (mode == "0" && bestDirectionStrategy != null &&
-					//	(strategyTestTemplate == strategy.StrategyTemplate
-					//	|| strategyTestTemplate == bestDirectionStrategy.StrategyTemplate)
-					//)
-					//{
-					//	int test = 9;
-					//	++test;
-					//}
-
-					if (bestDirectionStrategy == null || strategy.ProfitCounter > bestDirectionStrategy.ProfitCounter)
-					{
-						bestDirectionStrategy = strategy;
-					}
-				}
-				Console.WriteLine("Template={0}", bestDirectionStrategy.StrategyTemplate);
-				Console.WriteLine("Mode {0}, Forecasted: {1}, ProfitCounter={2}", mode, bestDirectionStrategy.ForecastedDirection, bestDirectionStrategy.ProfitCounter);
+				Console.WriteLine("Direction={0}", direction);
 				Console.WriteLine("");
+
+				foreach (var mode in modes)
+				{
+					DirectionStrategy bestDirectionStrategy = null;
+					for (int i = Constants.MinRank; i <= Constants.MaxRank; i++)
+					{
+						var strategy = ProcessRank(direction, mode, i - 1, currencyPair, xoListMain);
+
+						//if (mode == "0" && bestDirectionStrategy != null &&
+						//	(strategyTestTemplate == strategy.StrategyTemplate
+						//	|| strategyTestTemplate == bestDirectionStrategy.StrategyTemplate)
+						//)
+						//{
+						//	int test = 9;
+						//	++test;
+						//}
+
+						if (bestDirectionStrategy == null || strategy.ProfitCounter > bestDirectionStrategy.ProfitCounter)
+						{
+							bestDirectionStrategy = strategy;
+						}
+					}
+					Console.WriteLine("Template={0}", bestDirectionStrategy.StrategyTemplate);
+					Console.WriteLine("Mode {0}, Forecasted: {1}, ProfitCounter={2}", mode, bestDirectionStrategy.ForecastedDirection, bestDirectionStrategy.ProfitCounter);
+					Console.WriteLine("");
+				}
 			}
 		}
 
-		private static DirectionStrategy ProcessRank(string mode, int startXoIndex, string currencyPair, Dictionary<int, bool> xoListIn)
+		private static DirectionStrategy ProcessRank(int direction, string mode, int startXoIndex, string currencyPair, Dictionary<int, bool> xoListIn)
 		{
 			var dtStart = DateTime.Now;
 			var xoListMain = new Dictionary<int, bool>(xoListIn);
 
 			//xoListMain.Remove(xoListMain.Count - 1);
 			//xoListMain.Remove(xoListMain.Count - 1);
+
+			// +1/+0
+			switch(direction)
+			{
+				case 1: xoListMain[xoListMain.Count] = true; break;
+				case 0: xoListMain[xoListMain.Count] = false; break;
+			}
 
 			switch (mode)
 			{
