@@ -105,6 +105,7 @@ void AddTrade2Save(TradeStructure &trades[], TradeStructure &tradeToSave[], int 
    tradeToSave[total].price = trades[tradeIndex].price;
    tradeToSave[total].TP = trades[tradeIndex].TP;
    tradeToSave[total].SL = trades[tradeIndex].SL;
+   //tradeToSave[total].Comments = trades[tradeIndex].Comments;
    tradeToSave[total].Action = Action;
 }
 
@@ -123,6 +124,7 @@ void CopyTradesArray(TradeStructure &tradesSource[], TradeStructure &tradeDest[]
       tradeDest[i].price = tradesSource[i].price;
       tradeDest[i].TP = tradesSource[i].TP;
       tradeDest[i].SL = tradesSource[i].SL;
+      //tradeDest[i].Comments = tradesSource[i].Coments;
       tradeDest[i].Action = tradesSource[i].Action;
    }
 }
@@ -195,7 +197,7 @@ bool SaveModifiedTrades(TradeStructure &trades[])
    {
       FileWriteString(file_handle, fileData);
       FileClose(file_handle);
-      //FileMove(fileName, FILE_COMMON, targetFileName, FILE_REWRITE);
+      FileMove(fileName, FILE_COMMON, targetFileName, FILE_COMMON);
       //FileCopy(fileName, FILE_COMMON, targetFileName, FILE_REWRITE);
    }
    else
@@ -260,6 +262,7 @@ void GetCurrentTrades(TradeStructure &trades[])
      trades[pos].price = OrderOpenPrice();
      trades[pos].TP = OrderTakeProfit();
      trades[pos].SL = OrderStopLoss();
+     //trades[pos].Comments = trades[pos].ticket;
      trades[pos].Action = "";
    }
 }
@@ -289,6 +292,7 @@ string GetTradesRows(TradeStructure &trades[])
      tradeData = AddParam(tradeData, trades[i].TP);      //5
      tradeData = AddParam(tradeData, trades[i].SL);      //6
      tradeData = AddParam(tradeData, trades[i].Action);  //7
+     //tradeData = AddParam(tradeData, trades[i].Comments);//8
      
      tradesData = AddTrade(tradesData, tradeData);
    }
